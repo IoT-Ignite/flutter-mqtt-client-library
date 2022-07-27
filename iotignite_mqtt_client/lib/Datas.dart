@@ -30,8 +30,8 @@ class Datas{
   int public_gists;
   int followers;
   int following;
-  DateTime created_at;
-  DateTime updated_at;
+  String created_at;
+  String updated_at;
 
   Datas(
       this.login,
@@ -99,9 +99,16 @@ class Datas{
         json["public_gists"] as int,
         json["followers"] as int,
         json["following"] as int,
-        json["created_at"] as DateTime,
-        json["updated_at"] as DateTime,
+        json["created_at"] as String,
+        json["updated_at"] as String,
     );
 
   }
+
+  @override
+  String toString() {
+    return 'Datas{login: $login, id: $id, node_id: $node_id, avatar_url: $avatar_url, gravatar_id: $gravatar_id, url: $url, html_url: $html_url, followers_url: $followers_url, following_url: $following_url, gists_url: $gists_url, starred_url: $starred_url, subscriptions_url: $subscriptions_url, organizations_url: $organizations_url, repos_url: $repos_url, events_url: $events_url, received_events_url: $received_events_url, type: $type, site_admin: $site_admin, name: $name, company: $company, blog: $blog, location: $location, email: $email, hireable: $hireable, bio: $bio, twitter_username: $twitter_username, public_repos: $public_repos, public_gists: $public_gists, followers: $followers, following: $following, created_at: $created_at, updated_at: $updated_at}';
+  }
+
+
 }

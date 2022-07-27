@@ -17,9 +17,12 @@ Datas datasParse(String ans){
 }
 
 Future<Datas> allDatas() async{
-  var url = "https://api.github.com/users/xemeriusss";
+  var name = "xemeriusss";
+  var url = "https://api.github.com/users/${name}";
   var ans = await http.get(url);
   return datasParse(ans.body);
 }
+
+
 
 
