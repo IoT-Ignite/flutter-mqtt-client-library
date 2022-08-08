@@ -1,15 +1,21 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
+import 'package:iotignite_mqtt_client/AuthResponse.dart';
+import 'package:iotignite_mqtt_client/SettingsMessagerAppKeyResponse.dart';
 
-class TokenAuthentication{
+class RESTLibrary{
 
   String username;
   String password;
   String grantType= "password";
   bool autoRefreshToken;
 
-  TokenAuthentication(this.username, this.password, this.autoRefreshToken);
+  String token;
+
+  RESTLibrary(this.username, this.password, this.autoRefreshToken);
 
   Future<String> Auth() async{
 
@@ -23,10 +29,11 @@ class TokenAuthentication{
     );
 
     // parse the JSON
-    var jsonResponse = TokenResponse.fromJson(json.decode(answer.body));
+    var jsonResponse = AuthResponse.fromJson(json.decode(answer.body));
 
     if(answer.statusCode == 200){
       // If the server did return a 200 OK response
+      this.token = jsonResponse.access_token;
       return "Success! Token: ${jsonResponse.access_token}";
     }
     else if(answer.statusCode == 400){
@@ -45,32 +52,21 @@ class TokenAuthentication{
       return jsonResponse.error_description;
     }
   }
-}
 
-class TokenResponse{
+  Future<String> getAppKey() async {
+    var url = "https://api.ardich.com/api/v3/settings/messager/appkey";
+    var answer = await http.get(url, headers: {"Authorization": "Bearer ${this.token}"});
 
-  String access_token;
-  String token_type;
-  String refresh_token;
-  int expires_in;
-  String scope;
-  String error;
-  String error_description;
+    var jsonResponse = SettingsMessagerAppKeyResponse.fromJson(json.decode(answer.body));
 
-  TokenResponse(this.access_token, this.token_type, this.refresh_token,
-      this.expires_in, this.scope, this.error, this.error_description);
-
-  factory TokenResponse.fromJson(Map<String, dynamic> json){
-    return TokenResponse(
-        json["access_token"] as String,
-        json["token_type"] as String,
-        json["refresh_token"] as String,
-        json["expires_in"] as int,
-        json["scope"] as String,
-        json["error"] as String,
-        json["error_description"] as String,
-    );
+    if (answer.statusCode == 200) {
+      return "Success! Appkey: ${jsonResponse.appkey}";
+    } else if(answer.statusCode == 401){
+      return "Unauthorized";
+    }
   }
+
 }
+
 
 
