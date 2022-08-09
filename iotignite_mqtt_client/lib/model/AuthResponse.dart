@@ -1,5 +1,4 @@
-class AuthResponse{
-
+class AuthResponse {
   String access_token;
   String token_type;
   String refresh_token;
@@ -11,7 +10,7 @@ class AuthResponse{
   AuthResponse(this.access_token, this.token_type, this.refresh_token,
       this.expires_in, this.scope, this.error, this.error_description);
 
-  factory AuthResponse.fromJson(Map<String, dynamic> json){
+  factory AuthResponse.fromJson(Map<String, dynamic> json) {
     return AuthResponse(
       json["access_token"] as String,
       json["token_type"] as String,
