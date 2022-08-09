@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:async';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:http/http.dart' as http;
@@ -21,11 +22,13 @@ class IotIgniteRESTLib {
 
   IotIgniteRESTLib._(this.username, this.password, this.autoRefreshToken);
 
+  // to make singleton object
   static IotIgniteRESTLib getInstance(username, password, autoRefresh) {
+    // first time taking the object
     if (_singleInstance == null) {
       if (!EmailValidator.validate(username)) {
-        // throw format error.
-        throw InvalidEmailFormatException("Mail format is invalid", 508);
+        // throw format error
+        throw InvalidEmailFormatException("Mail format is invalid", 422);
       }
       _singleInstance = IotIgniteRESTLib._(username, password, autoRefresh);
     }
@@ -41,33 +44,29 @@ class IotIgniteRESTLib {
       "password": this.password
     };
 
-    var answer = await http.post(
-      url,
-      body: data,
-      headers: {
-        "Authorization": "Basic ZnJvbnRlbmQ6",
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    );
+      var answer = await http.post(
+        url,
+        body: data,
+        headers: {
+          "Authorization": "Basic ZnJvbnRlbmQ6",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      );
 
     print("return code=${answer.statusCode}");
+
     if (StatusCodes.SUCCESS == answer.statusCode) {
-      AuthResponse resp = AuthResponse.fromJson(json.decode(answer.body));
+      AuthResponse200 resp = AuthResponse200.fromJson(json.decode(answer.body));
       print(resp.access_token);
-    } else if (StatusCodes.BAD_REQUEST = answer.statusCode) {
-      AuthResponse resp = AuthResponse.fromJson(json.decode(answer.body));
+    } else if (StatusCodes.BAD_REQUEST == answer.statusCode) {
+      AuthResponse400 resp = AuthResponse400.fromJson(json.decode(answer.body));
       print(resp.error);
-// hatayı jsonı parse ET
+      // hatayı jsonı parse ET
     }
+  }
 
-
-    if (answer.statusCode == 200) {
-      // If the server did return a 200 OK response
-      this.token = jsonResponse.access_token;
-    } else if (answer.statusCode == 400) {
-      // If the server did return a 200 Bad Request response
-
-    }
+  Timer AuthTimer(){
+    return Timer.periodic(FIVE_MIN, (Timer t) => Auth());
   }
 
 /*  Future<String> getAppKey() async {
@@ -84,8 +83,8 @@ class IotIgniteRESTLib {
       return "Unauthorized";
     }
   }*/
-
-  Future<String> getEndUser() async {
+/*
+  Futu*re<String> getEndUser() async {
     var url = "https://api.ardich.com/api/v3/enduser";
     var answer =
         await http.get(url, headers: {"Authorization": "Bearer ${this.token}"});
@@ -97,5 +96,5 @@ class IotIgniteRESTLib {
     } else if (answer.statusCode == 401) {
       return "Unauthorized";
     }
-  }
+  } */
 }

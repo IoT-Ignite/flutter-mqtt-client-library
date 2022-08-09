@@ -1,7 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:iotignite_mqtt_client/iotignite_mqtt_client.dart';
-
 void main() {
   /*
   test('adds one to input values', () {
