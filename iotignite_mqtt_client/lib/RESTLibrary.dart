@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
 import 'package:iotignite_mqtt_client/AuthResponse.dart';
+import 'package:iotignite_mqtt_client/EnduserResponse.dart';
 import 'package:iotignite_mqtt_client/SettingsMessagerAppKeyResponse.dart';
 
 class RESTLibrary{
@@ -64,6 +65,21 @@ class RESTLibrary{
     } else if(answer.statusCode == 401){
       return "Unauthorized";
     }
+  }
+
+  Future<String> getEndUser() async{
+
+    var url = "https://api.ardich.com/api/v3/enduser";
+    var answer = await http.get(url, headers: {"Authorization": "Bearer ${this.token}"});
+
+    var jsonResponse = EnduserResponse.fromJson(json.decode(answer.body));
+
+    if (answer.statusCode == 200) {
+      return "Success! Mail: ${jsonResponse.contentsList[0].mail}"; //???
+    } else if(answer.statusCode == 401){
+      return "Unauthorized";
+    }
+
   }
 
 }

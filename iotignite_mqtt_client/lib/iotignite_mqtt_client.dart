@@ -3,7 +3,7 @@ library iotignite_mqtt_client;
 import 'dart:convert'; // for json parse
 import 'package:http/http.dart' as http;
 import 'package:iotignite_mqtt_client/Datas.dart';
-import 'package:iotignite_mqtt_client/TokenAuthentication.dart';
+import 'RESTLibrary.dart';
 
 /*
 /// A Calculator.
