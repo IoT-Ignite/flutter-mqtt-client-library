@@ -60,7 +60,9 @@ class IotIgniteRESTLib {
 
     if (StatusCodes.SUCCESS == answer.statusCode) {
       AuthResponse200 resp = AuthResponse200.fromJson(json.decode(answer.body));
-      this.refreshToken = resp.refresh_token;
+
+      this.refreshToken = resp.refresh_token; // for the first time to pass to getRefreshToken()
+
       print(resp.access_token);
     } else if (StatusCodes.BAD_REQUEST == answer.statusCode) {
       AuthResponse400 resp = AuthResponse400.fromJson(json.decode(answer.body));
@@ -89,13 +91,16 @@ class IotIgniteRESTLib {
     if (StatusCodes.SUCCESS == answer.statusCode) {
       AuthResponse200 resp = AuthResponse200.fromJson(json.decode(answer.body));
       print(resp.access_token);
+
+      this.refreshToken = resp.refresh_token; // to constantly renew
+
     } else if (StatusCodes.BAD_REQUEST == answer.statusCode) {
       AuthResponse400 resp = AuthResponse400.fromJson(json.decode(answer.body));
       print(resp.error);
     }
   }
 
-  Timer AuthTimer(){
+  Timer RefreshToken(){
     return Timer.periodic(FIVE_MIN, (Timer t) => getRefreshToken());
   }
 /*
