@@ -16,6 +16,9 @@ class IotIgniteRESTLib {
   String grantType = "password";
   bool autoRefreshToken;
 
+  String refreshGrantType = "refresh_token";
+  String refreshToken;
+
   String token;
 
   static IotIgniteRESTLib _singleInstance;
@@ -36,7 +39,7 @@ class IotIgniteRESTLib {
     return _singleInstance;
   }
 
-  Future<Void> Auth() async {
+  Future<void> Auth() async {
     var url = Uri.parse(BASE_URL + "oauth/token");
     var data = {
       "grant_type": this.grantType,
@@ -57,18 +60,59 @@ class IotIgniteRESTLib {
 
     if (StatusCodes.SUCCESS == answer.statusCode) {
       AuthResponse200 resp = AuthResponse200.fromJson(json.decode(answer.body));
+      this.refreshToken = resp.refresh_token;
       print(resp.access_token);
     } else if (StatusCodes.BAD_REQUEST == answer.statusCode) {
       AuthResponse400 resp = AuthResponse400.fromJson(json.decode(answer.body));
       print(resp.error);
-      // hatayı jsonı parse ET
+    }
+  }
+
+  Future<void> getRefreshToken() async{
+    var url = Uri.parse(BASE_URL + "oauth/token");
+    var data = {
+      "grant_type": this.refreshGrantType,
+      "refresh_token": this.refreshToken,
+    };
+
+    var answer = await http.post(
+      url,
+      body: data,
+      headers: {
+        "Authorization": "Basic ZnJvbnRlbmQ6",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    );
+
+    print("return code=${answer.statusCode}");
+
+    if (StatusCodes.SUCCESS == answer.statusCode) {
+      AuthResponse200 resp = AuthResponse200.fromJson(json.decode(answer.body));
+      print(resp.access_token);
+    } else if (StatusCodes.BAD_REQUEST == answer.statusCode) {
+      AuthResponse400 resp = AuthResponse400.fromJson(json.decode(answer.body));
+      print(resp.error);
     }
   }
 
   Timer AuthTimer(){
-    return Timer.periodic(FIVE_MIN, (Timer t) => Auth());
+    return Timer.periodic(FIVE_MIN, (Timer t) => getRefreshToken());
   }
+/*
+  Future<String> getEndUser() async {
+    var url = BASE_URL + "enduser";
+    var answer =
+    await http.get(url, headers: {"Authorization": "Bearer ${this.token}"});
 
+    var jsonResponse = EndUserResponse.fromJson(json.decode(answer.body));
+
+    if (answer.statusCode == 200) {
+      return "Success! Mail: ${jsonResponse.contentsList[0].mail}"; //???
+    } else if (answer.statusCode == 401) {
+      return "Unauthorized";
+    }
+  }
+*/
 /*  Future<String> getAppKey() async {
     var url = "https://api.ardich.com/api/v3/settings/messager/appkey";
     var answer =
@@ -83,18 +127,6 @@ class IotIgniteRESTLib {
       return "Unauthorized";
     }
   }*/
-/*
-  Futu*re<String> getEndUser() async {
-    var url = "https://api.ardich.com/api/v3/enduser";
-    var answer =
-        await http.get(url, headers: {"Authorization": "Bearer ${this.token}"});
 
-    var jsonResponse = EndUserResponse.fromJson(json.decode(answer.body));
 
-    if (answer.statusCode == 200) {
-      return "Success! Mail: ${jsonResponse.contentsList[0].mail}"; //???
-    } else if (answer.statusCode == 401) {
-      return "Unauthorized";
-    }
-  } */
 }
