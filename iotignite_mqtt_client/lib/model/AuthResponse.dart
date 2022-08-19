@@ -19,17 +19,3 @@ class AuthResponse200 {
   }
 }
 
-class AuthResponse400 {
-
-  String error;
-  String error_description;
-
-  AuthResponse400(this.error, this.error_description);
-
-  factory AuthResponse400.fromJson(Map<String, dynamic> json) {
-    return AuthResponse400(
-      json["error"] as String,
-      json["error_description"] as String,
-    );
-  }
-}

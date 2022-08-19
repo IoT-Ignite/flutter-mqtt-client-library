@@ -1,9 +1,9 @@
 class EndUserResponse {
   List<Links> linksList;
-  List<Contents> contentsList;
+  List<Content> content;
   Page page;
 
-  EndUserResponse(this.linksList, this.contentsList, this.page);
+  EndUserResponse(this.linksList, this.content, this.page);
 
   factory EndUserResponse.fromJson(Map<String, dynamic> json) {
     var linkListJsonArray = json["links"] as List;
@@ -12,8 +12,8 @@ class EndUserResponse {
         .toList();
 
     var contentsJsonArray = json["content"] as List;
-    List<Contents> contentList = contentsJsonArray
-        .map((contentsJsonArrayObj) => Contents.fromJson(contentsJsonArrayObj))
+    List<Content> contentList = contentsJsonArray
+        .map((contentsJsonArrayObj) => Content.fromJson(contentsJsonArrayObj))
         .toList();
 
     return EndUserResponse(linkList, contentList, Page.fromJson(json["page"]));
@@ -48,7 +48,7 @@ class Page {
   }
 }
 
-class Contents {
+class Content {
   String mail;
   String firstName;
   String lastName;
@@ -63,7 +63,7 @@ class Contents {
   int createdDate;
   int activationDate;
 
-  Contents(
+  Content(
       this.mail,
       this.firstName,
       this.lastName,
@@ -78,13 +78,13 @@ class Contents {
       this.createdDate,
       this.activationDate);
 
-  factory Contents.fromJson(Map<String, dynamic> json) {
+  factory Content.fromJson(Map<String, dynamic> json) {
     var linksJsonArray = json["links"] as List;
     List<Links> linksList = linksJsonArray
         .map((linksJsonArrayObj) => Links.fromJson(linksJsonArrayObj))
         .toList();
 
-    return Contents(
+    return Content(
       json["mail"] as String,
       json["firstName"] as String,
       json["lastName"] as String,
