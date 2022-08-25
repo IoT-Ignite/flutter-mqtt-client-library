@@ -13,4 +13,9 @@ class AppKeyResponse{
       json["links"] as List,
     );
   }
+
+  @override
+  String toString() {
+    return 'AppKeyResponse{appkey: $appkey, enabled: $enabled, links: $links}';
+  }
 }

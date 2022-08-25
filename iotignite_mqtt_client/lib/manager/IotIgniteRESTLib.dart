@@ -8,11 +8,10 @@ import 'package:iotignite_mqtt_client/exceptions/InvalidEmailFormatException.dar
 import 'package:iotignite_mqtt_client/model/AppKeyResponse.dart';
 import 'dart:convert';
 import 'package:iotignite_mqtt_client/model/AuthResponse.dart';
-import 'package:iotignite_mqtt_client/model/DeviceAdminUserResponse.dar.dart';
+import 'package:iotignite_mqtt_client/model/DeviceAdminUserResponse.dart';
 import 'package:iotignite_mqtt_client/model/DeviceResponse.dart';
 import 'package:iotignite_mqtt_client/model/DeviceSummaryResponse.dart';
 import 'package:iotignite_mqtt_client/model/EndUserResponse.dart';
-import 'package:iotignite_mqtt_client/model/ErrorResponse.dart';
 import 'package:iotignite_mqtt_client/model/NodeInventoryResponse.dart';
 import 'package:iotignite_mqtt_client/model/ProfilePoliciesResponse.dart';
 import 'package:iotignite_mqtt_client/model/SensorDataHistoryResponse.dart';
@@ -20,6 +19,10 @@ import 'package:iotignite_mqtt_client/model/SensorDataResponse.dart';
 import 'package:iotignite_mqtt_client/model/SyuserAuditorResponse.dart';
 import 'package:iotignite_mqtt_client/model/SyuserResponse.dart';
 import 'package:iotignite_mqtt_client/utils/Constants.dart';
+import 'package:iotignite_mqtt_client/model/ErrorResponse401.dart';
+import 'package:iotignite_mqtt_client/model/ErrorResponse403.dart';
+import 'package:iotignite_mqtt_client/model/ErrorResponse404.dart';
+import 'package:iotignite_mqtt_client/model/ErrorResponse500.dart';
 
 class IotIgniteRESTLib {
   String username;
@@ -76,7 +79,7 @@ class IotIgniteRESTLib {
       this.token = resp.access_token; // to send to other functions for authorization
       print(resp.access_token);
     } else if (StatusCodes.BAD_REQUEST == answer.statusCode) {
-      ErrorResponse resp = ErrorResponse.fromJson(json.decode(answer.body));
+      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
       print(resp.error_description);
     }
   }
@@ -107,7 +110,7 @@ class IotIgniteRESTLib {
       this.token = resp.access_token;
 
     } else if (StatusCodes.BAD_REQUEST == answer.statusCode) {
-      ErrorResponse resp = ErrorResponse.fromJson(json.decode(answer.body));
+      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
       print(resp.error_description);
     }
   }
@@ -130,7 +133,7 @@ class IotIgniteRESTLib {
       print("getEndUser() ${resp.content[0].mail} , ${resp.content[0].firstName} , ${resp.content[0].lastName}");
 
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse resp = ErrorResponse.fromJson(json.decode(answer.body));
+      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
       print(resp.error_description);
     }
   }
@@ -146,9 +149,9 @@ class IotIgniteRESTLib {
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
       AppKeyResponse resp = AppKeyResponse.fromJson(json.decode(answer.body));
-      print("getAppKey() ${resp.appkey}");
+      print("getAppKey() ${resp}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse resp = ErrorResponse.fromJson(json.decode(answer.body));
+      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
       print(resp.error_description);
     }
   }
@@ -164,9 +167,9 @@ class IotIgniteRESTLib {
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
       SyuserAuditorResponse resp = SyuserAuditorResponse.fromJson(json.decode(answer.body));
-      print("getSysUserInfo() ${resp.keys.apiKey}");
+      print("getSysUserInfo() ${resp}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse resp = ErrorResponse.fromJson(json.decode(answer.body));
+      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
       print(resp.error_description);
     }
   }
@@ -182,9 +185,9 @@ class IotIgniteRESTLib {
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
       SyuserResponse resp = SyuserResponse.fromJson(json.decode(answer.body));
-      print("isUserExists() ${resp.content[0].mail}");
+      print("isUserExists() ${resp}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse resp = ErrorResponse.fromJson(json.decode(answer.body));
+      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
       print(resp.error_description);
     }
   }
@@ -200,9 +203,9 @@ class IotIgniteRESTLib {
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
       DeviceResponse resp = DeviceResponse.fromJson(json.decode(answer.body));
-      print("getDeviceInfo() ${resp.content[0].deviceId} ");
+      print("getDeviceInfo() ${resp}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse resp = ErrorResponse.fromJson(json.decode(answer.body));
+      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
       print(resp.error_description);
     }
   }
@@ -218,9 +221,9 @@ class IotIgniteRESTLib {
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
       DeviceSummaryResponse resp = DeviceSummaryResponse.fromJson(json.decode(answer.body));
-      print("getDeviceSummary() ${resp.content[0].deviceId} ");
+      print("getDeviceSummary() ${resp}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse resp = ErrorResponse.fromJson(json.decode(answer.body));
+      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
       print(resp.error_description);
     }
   }
@@ -237,9 +240,9 @@ class IotIgniteRESTLib {
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
       NodeInventoryResponse resp = NodeInventoryResponse.fromJson(json.decode(answer.body));
-      print("getDeviceNodeInventory() ${resp.extras.nodes[0].nodeId} , ${resp.extras.nodes[1].nodeId} , ${resp.extras.nodes[2].nodeId} ");
+      print("getDeviceNodeInventory() ${resp}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse resp = ErrorResponse.fromJson(json.decode(answer.body));
+      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
       print(resp.error_description);
     } else if (answer.statusCode == StatusCodes.FORBIDDEN) {
       ErrorResponse403 resp = ErrorResponse403.fromJson(json.decode(answer.body));
@@ -262,9 +265,9 @@ class IotIgniteRESTLib {
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
       SensorDataResponse resp = SensorDataResponse.fromJson(json.decode(answer.body));
-      print("getLastData() ${resp.data.deviceId} , ${resp.data.data}");
+      print("getLastData() ${resp}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse resp = ErrorResponse.fromJson(json.decode(answer.body));
+      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
       print(resp.error_description);
     } else if (answer.statusCode == StatusCodes.FORBIDDEN) {
       ErrorResponse403 resp = ErrorResponse403.fromJson(json.decode(answer.body));
@@ -287,9 +290,9 @@ class IotIgniteRESTLib {
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
       SensorDataHistoryResponse resp = SensorDataHistoryResponse.fromJson(json.decode(answer.body));
-      print("getThingDataHistory() ${resp.list[0].data} ");
+      print("getThingDataHistory() ${resp}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse resp = ErrorResponse.fromJson(json.decode(answer.body));
+      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
       print(resp.error_description);
     }
   }
@@ -305,9 +308,9 @@ class IotIgniteRESTLib {
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
       DeviceAdminUserResponse resp = DeviceAdminUserResponse.fromJson(json.decode(answer.body));
-      print("getMqttUser() ${resp.deviceId} ");
+      print("getMqttUser() ${resp}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse resp = ErrorResponse.fromJson(json.decode(answer.body));
+      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
       print(resp.error_description);
     } else if (answer.statusCode == StatusCodes.INTERNAL_SERVER_ERROR) {
       ErrorResponse500 resp = ErrorResponse500.fromJson(json.decode(answer.body));
@@ -317,8 +320,9 @@ class IotIgniteRESTLib {
       print(resp.message);
     }
   }
+
+  // ERROR
 /*
-// List<ProfilePoliciesResponse>.from(json.decode(answer.body).map((x) => ProfilePoliciesResponse.fromJson(x))) as ProfilePoliciesResponse;
   Future<void> getProfilePolicies(String code) async {
     var url = BASE_URL + "profile/$code/policies";
     var answer =  await http.get(
@@ -343,7 +347,6 @@ class IotIgniteRESTLib {
     } else if (answer.statusCode == StatusCodes.NOT_FOUND) {
       print("null");
     }
-
   }
 */
 
