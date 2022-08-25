@@ -13,7 +13,7 @@ class Network{
     return Network(
       json["telephony"] == null ? null : Telephony.fromJson(json["telephony"]),
       json["wifi"] == null ? null : Wifi.fromJson(json["wifi"]),
-      Bluetooth.fromJson(json["bluetooth"]),
+      json["bluetooth"] == null ? null : Bluetooth.fromJson(json["bluetooth"]),
     );
   }
 
