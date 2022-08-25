@@ -5,10 +5,10 @@ class InvalidEmailFormatException implements Exception {
   InvalidEmailFormatException(this.errMessage, this.errorCode);
 
   String getMessage() {
-    return this.errMessage;
+    return errMessage;
   }
 
   int errCode() {
-    return this.errorCode;
+    return errorCode;
   }
 }
