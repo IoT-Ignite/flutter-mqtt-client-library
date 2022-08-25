@@ -148,7 +148,7 @@ class IotIgniteRESTLib {
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
       AppKeyResponse resp = AppKeyResponse.fromJson(json.decode(answer.body));
-      debugPrint("getAppKey() ${resp}");
+      debugPrint("getAppKey() $resp");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
@@ -253,10 +253,10 @@ class IotIgniteRESTLib {
   }
 
   Future<void> getLastData(
-      String device, String node_id, String sensor_id) async {
+      String device, String nodeId, String sensorId) async {
     var url = BASE_URL +
-        "device/${device}/sensor-data?"
-            "nodeId=${node_id}&sensorId=${sensor_id}";
+        "device/$device/sensor-data?"
+            "nodeId=$nodeId&sensorId=$sensorId";
     var answer =
         await http.get(url, headers: {"Authorization": "Bearer $token"});
 
@@ -265,7 +265,7 @@ class IotIgniteRESTLib {
     if (answer.statusCode == StatusCodes.SUCCESS) {
       SensorDataResponse resp =
           SensorDataResponse.fromJson(json.decode(answer.body));
-      debugPrint("getLastData() ${resp}");
+      debugPrint("getLastData() $resp");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
@@ -282,10 +282,10 @@ class IotIgniteRESTLib {
   }
 
   Future<void> getThingDataHistory(
-      String device, String node_id, String sensor_id) async {
+      String device, String nodeId, String sensorId) async {
     var url = BASE_URL +
-        "device/${device}/sensor-data-history?"
-            "nodeId=${node_id}&sensorId=${sensor_id}";
+        "device/$device/sensor-data-history?"
+            "nodeId=$nodeId&sensorId=$sensorId";
     var answer =
         await http.get(url, headers: {"Authorization": "Bearer $token"});
 
@@ -294,7 +294,7 @@ class IotIgniteRESTLib {
     if (answer.statusCode == StatusCodes.SUCCESS) {
       SensorDataHistoryResponse resp =
           SensorDataHistoryResponse.fromJson(json.decode(answer.body));
-      debugPrint("getThingDataHistory() ${resp}");
+      debugPrint("getThingDataHistory() $resp");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
@@ -312,7 +312,7 @@ class IotIgniteRESTLib {
     if (answer.statusCode == StatusCodes.SUCCESS) {
       DeviceAdminUserResponse resp =
           DeviceAdminUserResponse.fromJson(json.decode(answer.body));
-      debugPrint("getMqttUser() ${resp}");
+      debugPrint("getMqttUser() $resp");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));

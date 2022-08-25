@@ -68,7 +68,7 @@ class DeviceContent {
   factory DeviceContent.fromJson(Map<String, dynamic> json) {
     var userListJsonArray =
         json["users"] == null ? null : json["users"] as List;
-    List<Users> userList = null;
+    List<Users> userList;
     if (userListJsonArray != null) {
       userList = userListJsonArray.map((x) => Users.fromJson(x)).toList();
     }
