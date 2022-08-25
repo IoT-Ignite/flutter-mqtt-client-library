@@ -1,6 +1,6 @@
-import 'package:iotignite_mqtt_client/model/Profile.dart';
+import 'package:iotignite_mqtt_client/model/profile.dart';
 
-class CurrentUser{
+class CurrentUser {
   String code;
   String mail;
   String firstName;
@@ -33,7 +33,7 @@ class CurrentUser{
     return 'CurrentUser{code: $code, mail: $mail, firstName: $firstName, lastName: $lastName, activationCode: $activationCode, identityNo: $identityNo, phoneNumber: $phoneNumber, enabled: $enabled, activated: $activated, activationDate: $activationDate, profile: $profile, current: $current}';
   }
 
-  factory CurrentUser.fromJson(Map<String, dynamic> json){
+  factory CurrentUser.fromJson(Map<String, dynamic> json) {
     return CurrentUser(
       json["code"] as String,
       json["mail"] as String,

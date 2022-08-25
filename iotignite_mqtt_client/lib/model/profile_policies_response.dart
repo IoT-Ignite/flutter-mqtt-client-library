@@ -1,8 +1,7 @@
-import 'package:iotignite_mqtt_client/model/Links.dart';
-import 'package:iotignite_mqtt_client/model/PolicyProfile.dart';
+import 'package:iotignite_mqtt_client/model/links.dart';
+import 'package:iotignite_mqtt_client/model/policy_profile.dart';
 
-class ProfilePoliciesResponse{
-
+class ProfilePoliciesResponse {
   String code;
   String type;
   String desc;
@@ -29,8 +28,7 @@ class ProfilePoliciesResponse{
     return 'ProfilePoliciesResponse{code: $code, type: $type, desc: $desc, policyProfile: $policyProfile, defaults: $defaults, createdDate: $createdDate, startDate: $startDate, endDate: $endDate, links: $links}';
   }
 
-  factory ProfilePoliciesResponse.fromJson(Map<String, dynamic> json){
-
+  factory ProfilePoliciesResponse.fromJson(Map<String, dynamic> json) {
     var linksJson = json["links"] as List;
     List<Links> linksList = linksJson.map((y) => Links.fromJson(y)).toList();
 
@@ -43,8 +41,6 @@ class ProfilePoliciesResponse{
         json["createdDate"] as int,
         json["startDate"] as dynamic,
         json["endDate"] as dynamic,
-        linksList
-    );
+        linksList);
   }
 }
-

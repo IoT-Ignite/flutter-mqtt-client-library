@@ -1,4 +1,4 @@
-import 'package:iotignite_mqtt_client/model/Permissions.dart';
+import 'package:iotignite_mqtt_client/model/permissions.dart';
 
 class Roles {
   String name;
@@ -7,12 +7,13 @@ class Roles {
 
   Roles(this.name, this.desc, this.permissions);
 
-  factory Roles.fromJson(Map<String, dynamic> json){
-
-    var permissionsJson = json["permissions"] == null ? null : json["permissions"] as List;
+  factory Roles.fromJson(Map<String, dynamic> json) {
+    var permissionsJson =
+        json["permissions"] == null ? null : json["permissions"] as List;
     List<Permissions> permissionsList = null;
-    if(permissionsList != null){
-       permissionsList = permissionsJson.map((x) => Permissions.fromJson(x)).toList();
+    if (permissionsList != null) {
+      permissionsList =
+          permissionsJson.map((x) => Permissions.fromJson(x)).toList();
     }
 
     return Roles(
@@ -27,7 +28,3 @@ class Roles {
     return 'Roles{name: $name, desc: $desc, permissions: $permissions}';
   }
 }
-
-
-
-

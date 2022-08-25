@@ -1,4 +1,4 @@
-import 'package:iotignite_mqtt_client/model/Things.dart';
+import 'package:iotignite_mqtt_client/model/things.dart';
 
 class Nodes {
   String nodeId;
@@ -8,17 +8,13 @@ class Nodes {
 
   Nodes(this.nodeId, this.connected, this.description, this.things);
 
-  factory Nodes.fromJson(Map<String, dynamic> json){
-
+  factory Nodes.fromJson(Map<String, dynamic> json) {
     var thingsJson = json["things"] as List;
-    List<Things> thingsList = thingsJson.map((x) => Things.fromJson(x)).toList();
+    List<Things> thingsList =
+        thingsJson.map((x) => Things.fromJson(x)).toList();
 
-    return Nodes(
-        json["nodeId"] as String,
-        json["connected"] as int,
-        json["description"] as String,
-        thingsList
-    );
+    return Nodes(json["nodeId"] as String, json["connected"] as int,
+        json["description"] as String, thingsList);
   }
 
   @override
@@ -26,5 +22,3 @@ class Nodes {
     return 'Nodes{nodeId: $nodeId, connected: $connected, description: $description, things: $things}';
   }
 }
-
-

@@ -1,16 +1,15 @@
-import 'package:iotignite_mqtt_client/model/Network.dart';
-import 'package:iotignite_mqtt_client/model/Presence.dart';
-import 'package:iotignite_mqtt_client/model/OsProfile.dart';
-import 'package:iotignite_mqtt_client/model/Links.dart';
-import 'package:iotignite_mqtt_client/model/Battery.dart';
-import 'package:iotignite_mqtt_client/model/Storage.dart';
-import 'package:iotignite_mqtt_client/model/CurrentUser.dart';
-import 'package:iotignite_mqtt_client/model/Users.dart';
-import 'package:iotignite_mqtt_client/model/AdminArea.dart';
-import 'package:iotignite_mqtt_client/model/ActivePolicy.dart';
+import 'package:iotignite_mqtt_client/model/network.dart';
+import 'package:iotignite_mqtt_client/model/presence.dart';
+import 'package:iotignite_mqtt_client/model/os_profile.dart';
+import 'package:iotignite_mqtt_client/model/links.dart';
+import 'package:iotignite_mqtt_client/model/battery.dart';
+import 'package:iotignite_mqtt_client/model/storage.dart';
+import 'package:iotignite_mqtt_client/model/current_user.dart';
+import 'package:iotignite_mqtt_client/model/users.dart';
+import 'package:iotignite_mqtt_client/model/admin_area.dart';
+import 'package:iotignite_mqtt_client/model/active_policy.dart';
 
-class DeviceContent{
-
+class DeviceContent {
   String deviceId;
   String status;
   String model;
@@ -66,20 +65,21 @@ class DeviceContent{
       this.deviceTimezone,
       this.deviceCurrentTime);
 
-  factory DeviceContent.fromJson(Map<String, dynamic> json){
-
-    var userListJsonArray = json["users"] == null ? null : json["users"] as List;
+  factory DeviceContent.fromJson(Map<String, dynamic> json) {
+    var userListJsonArray =
+        json["users"] == null ? null : json["users"] as List;
     List<Users> userList = null;
-    if(userListJsonArray != null){
+    if (userListJsonArray != null) {
       userList = userListJsonArray.map((x) => Users.fromJson(x)).toList();
     }
 
     var linksJsonArray = json["links"] as List;
-    List<Links> linksList = linksJsonArray.map((y) => Links.fromJson(y)).toList();
+    List<Links> linksList =
+        linksJsonArray.map((y) => Links.fromJson(y)).toList();
 
     return DeviceContent(
       json["deviceId"] as String,
-      json["status"]  as String ,
+      json["status"] as String,
       json["model"] == null ? null : json["model"] as String,
       json["lockStatus"] as bool,
       json["mandatoryLockStatus"] as bool,
@@ -96,14 +96,20 @@ class DeviceContent{
       json["label"] == null ? null : json["label"] as String,
       json["battery"] == null ? null : Battery.fromJson(json["battery"]),
       json["storage"] == null ? null : Storage.fromJson(json["storage"]),
-      json["currentUser"] == null ? null : CurrentUser.fromJson(json["currentUser"]),
+      json["currentUser"] == null
+          ? null
+          : CurrentUser.fromJson(json["currentUser"]),
       userList,
       json["adminArea"] == null ? null : AdminArea.fromJson(json["adminArea"]),
-      json["activePolicy"] == null ? null : ActivePolicy.fromJson(json["activePolicy"]),
+      json["activePolicy"] == null
+          ? null
+          : ActivePolicy.fromJson(json["activePolicy"]),
       json["afexMode"] == null ? null : json["afexMode"] as String,
       json["currentPolicy"] == null ? null : json["currentPolicy"] as String,
       json["deviceTimezone"] == null ? null : json["deviceTimezone"] as String,
-      json["deviceCurrentTime"] == null ? null : json["deviceCurrentTime"] as String,
+      json["deviceCurrentTime"] == null
+          ? null
+          : json["deviceCurrentTime"] as String,
     );
   }
 

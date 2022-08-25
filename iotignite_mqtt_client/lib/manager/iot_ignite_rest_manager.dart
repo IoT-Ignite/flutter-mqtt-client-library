@@ -70,16 +70,17 @@ class IotIgniteRESTLib {
     debugPrint("return code=${answer.statusCode}");
 
     if (StatusCodes.SUCCESS == answer.statusCode) {
-      AuthResponse200 resp = AuthResponse200.fromJson(json.decode(answer.body));
+      AuthResponseSuccess resp =
+          AuthResponseSuccess.fromJson(json.decode(answer.body));
 
       refreshToken =
-          resp.refresh_token; // for the first time to pass to getRefreshToken()
-      token = resp.access_token; // to send to other functions for authorization
-      debugPrint(resp.access_token);
+          resp.refreshToken; // for the first time to pass to getRefreshToken()
+      token = resp.accessToken; // to send to other functions for authorization
+      debugPrint(resp.accessToken);
     } else if (StatusCodes.BAD_REQUEST == answer.statusCode) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
-      debugPrint(resp.error_description);
+      debugPrint(resp.errorDescription);
     }
   }
 
@@ -102,16 +103,17 @@ class IotIgniteRESTLib {
     debugPrint("return code=${answer.statusCode}");
 
     if (StatusCodes.SUCCESS == answer.statusCode) {
-      AuthResponse200 resp = AuthResponse200.fromJson(json.decode(answer.body));
+      AuthResponseSuccess resp =
+          AuthResponseSuccess.fromJson(json.decode(answer.body));
 
-      debugPrint(resp.access_token);
+      debugPrint(resp.accessToken);
 
-      refreshToken = resp.refresh_token; // to constantly renew
-      token = resp.access_token;
+      refreshToken = resp.refreshToken; // to constantly renew
+      token = resp.accessToken;
     } else if (StatusCodes.BAD_REQUEST == answer.statusCode) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
-      debugPrint(resp.error_description);
+      debugPrint(resp.errorDescription);
     }
   }
 
@@ -133,7 +135,7 @@ class IotIgniteRESTLib {
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
-      debugPrint(resp.error_description);
+      debugPrint(resp.errorDescription);
     }
   }
 
@@ -150,7 +152,7 @@ class IotIgniteRESTLib {
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
-      debugPrint(resp.error_description);
+      debugPrint(resp.errorDescription);
     }
   }
 
@@ -168,7 +170,7 @@ class IotIgniteRESTLib {
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
-      debugPrint(resp.error_description);
+      debugPrint(resp.errorDescription);
     }
   }
 
@@ -185,7 +187,7 @@ class IotIgniteRESTLib {
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
-      debugPrint(resp.error_description);
+      debugPrint(resp.errorDescription);
     }
   }
 
@@ -202,7 +204,7 @@ class IotIgniteRESTLib {
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
-      debugPrint(resp.error_description);
+      debugPrint(resp.errorDescription);
     }
   }
 
@@ -220,7 +222,7 @@ class IotIgniteRESTLib {
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
-      debugPrint(resp.error_description);
+      debugPrint(resp.errorDescription);
     }
   }
 
@@ -238,7 +240,7 @@ class IotIgniteRESTLib {
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
-      debugPrint(resp.error_description);
+      debugPrint(resp.errorDescription);
     } else if (answer.statusCode == StatusCodes.FORBIDDEN) {
       ErrorResponseForbidden resp =
           ErrorResponseForbidden.fromJson(json.decode(answer.body));
@@ -267,7 +269,7 @@ class IotIgniteRESTLib {
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
-      debugPrint(resp.error_description);
+      debugPrint(resp.errorDescription);
     } else if (answer.statusCode == StatusCodes.FORBIDDEN) {
       ErrorResponseForbidden resp =
           ErrorResponseForbidden.fromJson(json.decode(answer.body));
@@ -296,7 +298,7 @@ class IotIgniteRESTLib {
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
-      debugPrint(resp.error_description);
+      debugPrint(resp.errorDescription);
     }
   }
 
@@ -314,7 +316,7 @@ class IotIgniteRESTLib {
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
-      debugPrint(resp.error_description);
+      debugPrint(resp.errorDescription);
     } else if (answer.statusCode == StatusCodes.INTERNAL_SERVER_ERROR) {
       ErrorResponseInternalServer resp =
           ErrorResponseInternalServer.fromJson(json.decode(answer.body));

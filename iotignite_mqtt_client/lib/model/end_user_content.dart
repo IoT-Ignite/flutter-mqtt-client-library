@@ -1,8 +1,8 @@
-import 'package:iotignite_mqtt_client/model/AdminArea.dart';
-import 'package:iotignite_mqtt_client/model/Profile.dart';
-import 'package:iotignite_mqtt_client/model/Links.dart';
+import 'package:iotignite_mqtt_client/model/admin_area.dart';
+import 'package:iotignite_mqtt_client/model/profile.dart';
+import 'package:iotignite_mqtt_client/model/links.dart';
 
-class EnduserContent {
+class EndUserContent {
   String mail;
   String firstName;
   String lastName;
@@ -17,7 +17,7 @@ class EnduserContent {
   int createdDate;
   int activationDate;
 
-  EnduserContent(
+  EndUserContent(
       this.mail,
       this.firstName,
       this.lastName,
@@ -37,13 +37,13 @@ class EnduserContent {
     return 'Content{mail: $mail, firstName: $firstName, lastName: $lastName, identityNo: $identityNo, enabled: $enabled, adminArea: $adminArea, profile: $profile, links: $links, code: $code, activationCode: $activationCode, activated: $activated, createdDate: $createdDate, activationDate: $activationDate}';
   }
 
-  factory EnduserContent.fromJson(Map<String, dynamic> json) {
+  factory EndUserContent.fromJson(Map<String, dynamic> json) {
     var linksJsonArray = json["links"] as List;
     List<Links> linksList = linksJsonArray
         .map((linksJsonArrayObj) => Links.fromJson(linksJsonArrayObj))
         .toList();
 
-    return EnduserContent(
+    return EndUserContent(
       json["mail"] as String,
       json["firstName"] as String,
       json["lastName"] as String,
@@ -59,5 +59,4 @@ class EnduserContent {
       json["activationDate"] as int,
     );
   }
-
 }

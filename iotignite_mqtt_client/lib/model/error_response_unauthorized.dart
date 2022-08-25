@@ -1,8 +1,8 @@
 class ErrorResponseUnauthorized {
   String error;
-  String error_description;
+  String errorDescription;
 
-  ErrorResponseUnauthorized(this.error, this.error_description);
+  ErrorResponseUnauthorized(this.error, this.errorDescription);
 
   factory ErrorResponseUnauthorized.fromJson(Map<String, dynamic> json) {
     return ErrorResponseUnauthorized(

@@ -23,6 +23,6 @@ class SysUserResponse {
 
   @override
   String toString() {
-    return 'SyuserResponse{links: $links, content: $content, page: $page}';
+    return 'SysUserResponse{links: $links, content: $content, page: $page}';
   }
 }

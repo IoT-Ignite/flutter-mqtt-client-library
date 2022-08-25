@@ -1,10 +1,9 @@
-import 'package:iotignite_mqtt_client/model/Settings.dart';
-import 'package:iotignite_mqtt_client/model/InstallationPolicies.dart';
-import 'package:iotignite_mqtt_client/model/WifiApnPolicies.dart';
-import 'package:iotignite_mqtt_client/model/HotspotConfig.dart';
+import 'package:iotignite_mqtt_client/model/settings.dart';
+import 'package:iotignite_mqtt_client/model/installation_policies.dart';
+import 'package:iotignite_mqtt_client/model/wifi_apn_policies.dart';
+import 'package:iotignite_mqtt_client/model/hotspot_config.dart';
 
 class PolicyProfile {
-
   String name;
   List<dynamic> bookmarks;
   List<Settings> settings;
@@ -34,10 +33,10 @@ class PolicyProfile {
       this.ecrSettings,
       this.passwordPolicy);
 
-  factory PolicyProfile.fromJson(Map<String, dynamic> json){
-
+  factory PolicyProfile.fromJson(Map<String, dynamic> json) {
     var settingsJson = json["settings"] as List;
-    List<Settings> settingsList = settingsJson.map((y) => Settings.fromJson(y)).toList();
+    List<Settings> settingsList =
+        settingsJson.map((y) => Settings.fromJson(y)).toList();
 
     return PolicyProfile(
         json["name"] as String,
@@ -52,8 +51,7 @@ class PolicyProfile {
         json["mobileApnConfigs"] as List,
         HotspotConfig.fromJson(json["hotspotConfig"]),
         json["ecrSettings"] as dynamic,
-        json["passwordPolicy"] as dynamic
-    );
+        json["passwordPolicy"] as dynamic);
   }
 
   @override
@@ -61,12 +59,3 @@ class PolicyProfile {
     return 'PolicyProfile{name: $name, bookmarks: $bookmarks, settings: $settings, applicationPolicies: $applicationPolicies, applicationBlackPermissions: $applicationBlackPermissions, installationPolicies: $installationPolicies, wifiApnPolicies: $wifiApnPolicies, applicationShortcuts: $applicationShortcuts, wificonfigs: $wificonfigs, mobileApnConfigs: $mobileApnConfigs, hotspotConfig: $hotspotConfig, ecrSettings: $ecrSettings, passwordPolicy: $passwordPolicy}';
   }
 }
-
-
-
-
-
-
-
-
-

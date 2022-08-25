@@ -1,10 +1,10 @@
-import 'package:iotignite_mqtt_client/model/Links.dart';
-import 'package:iotignite_mqtt_client/model/Page.dart';
-import 'package:iotignite_mqtt_client/model/EnduserContent.dart';
+import 'package:iotignite_mqtt_client/model/links.dart';
+import 'package:iotignite_mqtt_client/model/page.dart';
+import 'package:iotignite_mqtt_client/model/end_user_content.dart';
 
 class EndUserResponse {
   List<Links> linksList;
-  List<EnduserContent> content;
+  List<EndUserContent> content;
   Page page;
 
   EndUserResponse(this.linksList, this.content, this.page);
@@ -16,8 +16,9 @@ class EndUserResponse {
         .toList();
 
     var contentsJsonArray = json["content"] as List;
-    List<EnduserContent> contentList = contentsJsonArray
-        .map((contentsJsonArrayObj) => EnduserContent.fromJson(contentsJsonArrayObj))
+    List<EndUserContent> contentList = contentsJsonArray
+        .map((contentsJsonArrayObj) =>
+            EndUserContent.fromJson(contentsJsonArrayObj))
         .toList();
 
     return EndUserResponse(linkList, contentList, Page.fromJson(json["page"]));

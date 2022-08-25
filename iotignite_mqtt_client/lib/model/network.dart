@@ -1,15 +1,15 @@
-import 'package:iotignite_mqtt_client/model/Telephony.dart';
-import 'package:iotignite_mqtt_client/model/Wifi.dart';
-import 'package:iotignite_mqtt_client/model/Bluetooth.dart';
+import 'package:iotignite_mqtt_client/model/telephony.dart';
+import 'package:iotignite_mqtt_client/model/wifi.dart';
+import 'package:iotignite_mqtt_client/model/bluetooth.dart';
 
-class Network{
+class Network {
   Telephony telephony;
   Wifi wifi;
   Bluetooth bluetooth;
 
   Network(this.telephony, this.wifi, this.bluetooth);
 
-  factory Network.fromJson(Map<String, dynamic> json){
+  factory Network.fromJson(Map<String, dynamic> json) {
     return Network(
       json["telephony"] == null ? null : Telephony.fromJson(json["telephony"]),
       json["wifi"] == null ? null : Wifi.fromJson(json["wifi"]),
