@@ -1,5 +1,4 @@
-class ErrorResponse500 {
-
+class ErrorResponseInternalServer {
   String result;
   String type;
   String message;
@@ -7,12 +6,11 @@ class ErrorResponse500 {
   String desc;
   List<dynamic> links;
 
-  ErrorResponse500(this.result, this.type, this.message, this.code,
-      this.desc, this.links);
+  ErrorResponseInternalServer(
+      this.result, this.type, this.message, this.code, this.desc, this.links);
 
-  factory ErrorResponse500.fromJson(Map<String, dynamic> json){
-
-    return ErrorResponse500(
+  factory ErrorResponseInternalServer.fromJson(Map<String, dynamic> json) {
+    return ErrorResponseInternalServer(
       json["result"] as String,
       json["type"] as String,
       json["message"] as String,

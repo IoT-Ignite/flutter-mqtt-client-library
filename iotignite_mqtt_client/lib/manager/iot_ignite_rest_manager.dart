@@ -1,28 +1,25 @@
-import 'dart:ffi';
-import 'dart:io';
 import 'dart:async';
-
 import 'package:email_validator/email_validator.dart';
 import 'package:http/http.dart' as http;
-import 'package:iotignite_mqtt_client/exceptions/InvalidEmailFormatException.dart';
-import 'package:iotignite_mqtt_client/model/AppKeyResponse.dart';
+import 'package:iotignite_mqtt_client/exceptions/invalid_email_format_exception.dart';
+import 'package:iotignite_mqtt_client/model/app_key_response.dart';
 import 'dart:convert';
-import 'package:iotignite_mqtt_client/model/AuthResponse.dart';
-import 'package:iotignite_mqtt_client/model/DeviceAdminUserResponse.dart';
-import 'package:iotignite_mqtt_client/model/DeviceResponse.dart';
-import 'package:iotignite_mqtt_client/model/DeviceSummaryResponse.dart';
-import 'package:iotignite_mqtt_client/model/EndUserResponse.dart';
-import 'package:iotignite_mqtt_client/model/NodeInventoryResponse.dart';
-import 'package:iotignite_mqtt_client/model/ProfilePoliciesResponse.dart';
-import 'package:iotignite_mqtt_client/model/SensorDataHistoryResponse.dart';
-import 'package:iotignite_mqtt_client/model/SensorDataResponse.dart';
-import 'package:iotignite_mqtt_client/model/SyuserAuditorResponse.dart';
-import 'package:iotignite_mqtt_client/model/SyuserResponse.dart';
-import 'package:iotignite_mqtt_client/utils/Constants.dart';
-import 'package:iotignite_mqtt_client/model/ErrorResponse401.dart';
-import 'package:iotignite_mqtt_client/model/ErrorResponse403.dart';
-import 'package:iotignite_mqtt_client/model/ErrorResponse404.dart';
-import 'package:iotignite_mqtt_client/model/ErrorResponse500.dart';
+import 'package:iotignite_mqtt_client/model/auth_response.dart';
+import 'package:iotignite_mqtt_client/model/device_admin_user_response.dart';
+import 'package:iotignite_mqtt_client/model/device_response.dart';
+import 'package:iotignite_mqtt_client/model/device_summary_response.dart';
+import 'package:iotignite_mqtt_client/model/end_user_response.dart';
+import 'package:iotignite_mqtt_client/model/node_inventory_response.dart';
+import 'package:iotignite_mqtt_client/model/sensor_data_history_response.dart';
+import 'package:iotignite_mqtt_client/model/sensor_data_response.dart';
+import 'package:iotignite_mqtt_client/model/sys_user_auditor_response.dart';
+import 'package:iotignite_mqtt_client/model/sys_user_response.dart';
+import 'package:iotignite_mqtt_client/utils/constants.dart';
+import 'package:iotignite_mqtt_client/model/error_response_unauthorized.dart';
+import 'package:iotignite_mqtt_client/model/error_response_forbidden.dart';
+import 'package:iotignite_mqtt_client/model/error_response_not_found.dart';
+import 'package:iotignite_mqtt_client/model/error_response_internal_server.dart';
+import 'package:iotignite_mqtt_client/utils/utility_functions.dart';
 
 class IotIgniteRESTLib {
   String username;
@@ -53,42 +50,12 @@ class IotIgniteRESTLib {
     return _singleInstance;
   }
 
-  Future<void> Auth() async {
+  Future<void> auth() async {
     var url = Uri.parse(BASE_URL + "oauth/token");
     var data = {
-      "grant_type": this.grantType,
-      "username": this.username,
-      "password": this.password
-    };
-
-      var answer = await http.post(
-        url,
-        body: data,
-        headers: {
-          "Authorization": "Basic ZnJvbnRlbmQ6",
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      );
-
-    print("return code=${answer.statusCode}");
-
-    if (StatusCodes.SUCCESS == answer.statusCode) {
-      AuthResponse200 resp = AuthResponse200.fromJson(json.decode(answer.body));
-
-      this.refreshToken = resp.refresh_token; // for the first time to pass to getRefreshToken()
-      this.token = resp.access_token; // to send to other functions for authorization
-      print(resp.access_token);
-    } else if (StatusCodes.BAD_REQUEST == answer.statusCode) {
-      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
-      print(resp.error_description);
-    }
-  }
-
-  Future<void> getRefreshToken() async{
-    var url = Uri.parse(BASE_URL + "oauth/token");
-    var data = {
-      "grant_type": this.refreshGrantType,
-      "refresh_token": this.refreshToken,
+      "grant_type": grantType,
+      "username": username,
+      "password": password
     };
 
     var answer = await http.post(
@@ -100,224 +67,262 @@ class IotIgniteRESTLib {
       },
     );
 
-    print("return code=${answer.statusCode}");
+    debugPrint("return code=${answer.statusCode}");
 
     if (StatusCodes.SUCCESS == answer.statusCode) {
       AuthResponse200 resp = AuthResponse200.fromJson(json.decode(answer.body));
-      print(resp.access_token);
 
-      this.refreshToken = resp.refresh_token; // to constantly renew
-      this.token = resp.access_token;
-
+      refreshToken =
+          resp.refresh_token; // for the first time to pass to getRefreshToken()
+      token = resp.access_token; // to send to other functions for authorization
+      debugPrint(resp.access_token);
     } else if (StatusCodes.BAD_REQUEST == answer.statusCode) {
-      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
-      print(resp.error_description);
+      ErrorResponseUnauthorized resp =
+          ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
+      debugPrint(resp.error_description);
     }
   }
 
-  Timer RefreshToken(){
+  Future<void> getRefreshToken() async {
+    var url = Uri.parse(BASE_URL + "oauth/token");
+    var data = {
+      "grant_type": refreshGrantType,
+      "refresh_token": refreshToken,
+    };
+
+    var answer = await http.post(
+      url,
+      body: data,
+      headers: {
+        "Authorization": "Basic ZnJvbnRlbmQ6",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    );
+
+    debugPrint("return code=${answer.statusCode}");
+
+    if (StatusCodes.SUCCESS == answer.statusCode) {
+      AuthResponse200 resp = AuthResponse200.fromJson(json.decode(answer.body));
+
+      debugPrint(resp.access_token);
+
+      refreshToken = resp.refresh_token; // to constantly renew
+      token = resp.access_token;
+    } else if (StatusCodes.BAD_REQUEST == answer.statusCode) {
+      ErrorResponseUnauthorized resp =
+          ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
+      debugPrint(resp.error_description);
+    }
+  }
+
+  Timer RefreshToken() {
     return Timer.periodic(FIVE_MIN, (Timer t) => getRefreshToken());
   }
 
   Future<void> getEndUser() async {
     var url = BASE_URL + "enduser";
-    var answer =  await http.get(
-        url,
-        headers: {"Authorization": "Bearer $token"}
-    );
+    var answer =
+        await http.get(url, headers: {"Authorization": "Bearer $token"});
 
-    print("return code=${answer.statusCode}");
+    debugPrint("return code=${answer.statusCode}");
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
       EndUserResponse resp = EndUserResponse.fromJson(json.decode(answer.body));
-      print("getEndUser() ${resp.content[0].mail} , ${resp.content[0].firstName} , ${resp.content[0].lastName}");
-
+      debugPrint(
+          "getEndUser() ${resp.content[0].mail} , ${resp.content[0].firstName} , ${resp.content[0].lastName}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
-      print(resp.error_description);
+      ErrorResponseUnauthorized resp =
+          ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
+      debugPrint(resp.error_description);
     }
   }
 
   Future<void> getAppKey() async {
     var url = BASE_URL + "settings/messager/appkey";
-    var answer =  await http.get(
-        url,
-        headers: {"Authorization": "Bearer $token"}
-    );
+    var answer =
+        await http.get(url, headers: {"Authorization": "Bearer $token"});
 
-    print("return code=${answer.statusCode}");
+    debugPrint("return code=${answer.statusCode}");
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
       AppKeyResponse resp = AppKeyResponse.fromJson(json.decode(answer.body));
-      print("getAppKey() ${resp}");
+      debugPrint("getAppKey() ${resp}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
-      print(resp.error_description);
+      ErrorResponseUnauthorized resp =
+          ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
+      debugPrint(resp.error_description);
     }
   }
 
   Future<void> getSysUserInfo() async {
     var url = BASE_URL + "sysuser/auditor";
-    var answer =  await http.get(
-        url,
-        headers: {"Authorization": "Bearer $token"}
-    );
+    var answer =
+        await http.get(url, headers: {"Authorization": "Bearer $token"});
 
-    print("return code=${answer.statusCode}");
+    debugPrint("return code=${answer.statusCode}");
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
-      SyuserAuditorResponse resp = SyuserAuditorResponse.fromJson(json.decode(answer.body));
-      print("getSysUserInfo() ${resp}");
+      SysUserAuditorResponse resp =
+          SysUserAuditorResponse.fromJson(json.decode(answer.body));
+      debugPrint("getSysUserInfo() $resp");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
-      print(resp.error_description);
+      ErrorResponseUnauthorized resp =
+          ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
+      debugPrint(resp.error_description);
     }
   }
 
   Future<void> isUserExists() async {
     var url = BASE_URL + "sysuser";
-    var answer =  await http.get(
-        url,
-        headers: {"Authorization": "Bearer $token"}
-    );
+    var answer =
+        await http.get(url, headers: {"Authorization": "Bearer $token"});
 
-    print("return code=${answer.statusCode}");
+    debugPrint("return code=${answer.statusCode}");
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
-      SyuserResponse resp = SyuserResponse.fromJson(json.decode(answer.body));
-      print("isUserExists() ${resp}");
+      SysUserResponse resp = SysUserResponse.fromJson(json.decode(answer.body));
+      debugPrint("isUserExists() $resp");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
-      print(resp.error_description);
+      ErrorResponseUnauthorized resp =
+          ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
+      debugPrint(resp.error_description);
     }
   }
 
   Future<void> getDeviceInfo() async {
     var url = BASE_URL + "device";
-    var answer =  await http.get(
-        url,
-        headers: {"Authorization": "Bearer $token"}
-    );
+    var answer =
+        await http.get(url, headers: {"Authorization": "Bearer $token"});
 
-    print("return code=${answer.statusCode}");
+    debugPrint("return code=${answer.statusCode}");
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
       DeviceResponse resp = DeviceResponse.fromJson(json.decode(answer.body));
-      print("getDeviceInfo() ${resp}");
+      debugPrint("getDeviceInfo() $resp");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
-      print(resp.error_description);
+      ErrorResponseUnauthorized resp =
+          ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
+      debugPrint(resp.error_description);
     }
   }
 
   Future<void> getDeviceSummary() async {
     var url = BASE_URL + "device/summary";
-    var answer =  await http.get(
-        url,
-        headers: {"Authorization": "Bearer $token"}
-    );
+    var answer =
+        await http.get(url, headers: {"Authorization": "Bearer $token"});
 
-    print("return code=${answer.statusCode}");
+    debugPrint("return code=${answer.statusCode}");
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
-      DeviceSummaryResponse resp = DeviceSummaryResponse.fromJson(json.decode(answer.body));
-      print("getDeviceSummary() ${resp}");
+      DeviceSummaryResponse resp =
+          DeviceSummaryResponse.fromJson(json.decode(answer.body));
+      debugPrint("getDeviceSummary() $resp");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
-      print(resp.error_description);
+      ErrorResponseUnauthorized resp =
+          ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
+      debugPrint(resp.error_description);
     }
   }
 
   Future<void> getDeviceNodeInventory(String device) async {
-
     var url = BASE_URL + "device/$device/device-node-inventory";
-    var answer =  await http.get(
-        url,
-        headers: {"Authorization": "Bearer $token"}
-    );
+    var answer =
+        await http.get(url, headers: {"Authorization": "Bearer $token"});
 
-    print("return code=${answer.statusCode}");
+    debugPrint("return code=${answer.statusCode}");
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
-      NodeInventoryResponse resp = NodeInventoryResponse.fromJson(json.decode(answer.body));
-      print("getDeviceNodeInventory() ${resp}");
+      NodeInventoryResponse resp =
+          NodeInventoryResponse.fromJson(json.decode(answer.body));
+      debugPrint("getDeviceNodeInventory() $resp");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
-      print(resp.error_description);
+      ErrorResponseUnauthorized resp =
+          ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
+      debugPrint(resp.error_description);
     } else if (answer.statusCode == StatusCodes.FORBIDDEN) {
-      ErrorResponse403 resp = ErrorResponse403.fromJson(json.decode(answer.body));
-      print(resp.message);
+      ErrorResponseForbidden resp =
+          ErrorResponseForbidden.fromJson(json.decode(answer.body));
+      debugPrint(resp.message);
     } else if (answer.statusCode == StatusCodes.NOT_FOUND) {
-      ErrorResponse404 resp = ErrorResponse404.fromJson(json.decode(answer.body));
-      print(resp.message);
+      ErrorResponseNotFound resp =
+          ErrorResponseNotFound.fromJson(json.decode(answer.body));
+      debugPrint(resp.message);
     }
   }
 
-  Future<void> getLastData(String device, String node_id, String sensor_id) async {
-    var url = BASE_URL + "device/${device}/sensor-data?"
-        "nodeId=${node_id}&sensorId=${sensor_id}";
-    var answer =  await http.get(
-        url,
-        headers: {"Authorization": "Bearer $token"}
-    );
+  Future<void> getLastData(
+      String device, String node_id, String sensor_id) async {
+    var url = BASE_URL +
+        "device/${device}/sensor-data?"
+            "nodeId=${node_id}&sensorId=${sensor_id}";
+    var answer =
+        await http.get(url, headers: {"Authorization": "Bearer $token"});
 
-    print("return code=${answer.statusCode}");
+    debugPrint("return code=${answer.statusCode}");
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
-      SensorDataResponse resp = SensorDataResponse.fromJson(json.decode(answer.body));
-      print("getLastData() ${resp}");
+      SensorDataResponse resp =
+          SensorDataResponse.fromJson(json.decode(answer.body));
+      debugPrint("getLastData() ${resp}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
-      print(resp.error_description);
+      ErrorResponseUnauthorized resp =
+          ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
+      debugPrint(resp.error_description);
     } else if (answer.statusCode == StatusCodes.FORBIDDEN) {
-      ErrorResponse403 resp = ErrorResponse403.fromJson(json.decode(answer.body));
-      print(resp.message);
+      ErrorResponseForbidden resp =
+          ErrorResponseForbidden.fromJson(json.decode(answer.body));
+      debugPrint(resp.message);
     } else if (answer.statusCode == StatusCodes.INTERNAL_SERVER_ERROR) {
-      ErrorResponse500 resp = ErrorResponse500.fromJson(json.decode(answer.body));
-      print(resp.message);
+      ErrorResponseInternalServer resp =
+          ErrorResponseInternalServer.fromJson(json.decode(answer.body));
+      debugPrint(resp.message);
     }
   }
 
-  Future<void> getThingDataHistory(String device, String node_id, String sensor_id) async {
-    var url = BASE_URL + "device/${device}/sensor-data-history?"
-        "nodeId=${node_id}&sensorId=${sensor_id}";
-    var answer =  await http.get(
-        url,
-        headers: {"Authorization": "Bearer $token"}
-    );
+  Future<void> getThingDataHistory(
+      String device, String node_id, String sensor_id) async {
+    var url = BASE_URL +
+        "device/${device}/sensor-data-history?"
+            "nodeId=${node_id}&sensorId=${sensor_id}";
+    var answer =
+        await http.get(url, headers: {"Authorization": "Bearer $token"});
 
-    print("return code=${answer.statusCode}");
+    debugPrint("return code=${answer.statusCode}");
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
-      SensorDataHistoryResponse resp = SensorDataHistoryResponse.fromJson(json.decode(answer.body));
-      print("getThingDataHistory() ${resp}");
+      SensorDataHistoryResponse resp =
+          SensorDataHistoryResponse.fromJson(json.decode(answer.body));
+      debugPrint("getThingDataHistory() ${resp}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
-      print(resp.error_description);
+      ErrorResponseUnauthorized resp =
+          ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
+      debugPrint(resp.error_description);
     }
   }
 
   Future<void> getMqttUser(String device) async {
     var url = BASE_URL + "device-admin/user/$device";
-    var answer =  await http.get(
-        url,
-        headers: {"Authorization": "Bearer $token"}
-    );
+    var answer =
+        await http.get(url, headers: {"Authorization": "Bearer $token"});
 
-    print("return code=${answer.statusCode}");
+    debugPrint("return code=${answer.statusCode}");
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
-      DeviceAdminUserResponse resp = DeviceAdminUserResponse.fromJson(json.decode(answer.body));
-      print("getMqttUser() ${resp}");
+      DeviceAdminUserResponse resp =
+          DeviceAdminUserResponse.fromJson(json.decode(answer.body));
+      debugPrint("getMqttUser() ${resp}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
-      ErrorResponse401 resp = ErrorResponse401.fromJson(json.decode(answer.body));
-      print(resp.error_description);
+      ErrorResponseUnauthorized resp =
+          ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
+      debugPrint(resp.error_description);
     } else if (answer.statusCode == StatusCodes.INTERNAL_SERVER_ERROR) {
-      ErrorResponse500 resp = ErrorResponse500.fromJson(json.decode(answer.body));
-      print(resp.message);
+      ErrorResponseInternalServer resp =
+          ErrorResponseInternalServer.fromJson(json.decode(answer.body));
+      debugPrint(resp.message);
     } else if (answer.statusCode == StatusCodes.FORBIDDEN) {
-      ErrorResponse403 resp = ErrorResponse403.fromJson(json.decode(answer.body));
-      print(resp.message);
+      ErrorResponseForbidden resp =
+          ErrorResponseForbidden.fromJson(json.decode(answer.body));
+      debugPrint(resp.message);
     }
   }
 
@@ -330,26 +335,24 @@ class IotIgniteRESTLib {
         headers: {"Authorization": "Bearer $token"}
     );
 
-    print("return code=${answer.statusCode}");
+    debugPrint("return code=${answer.statusCode}");
 
     if (answer.statusCode == StatusCodes.SUCCESS) {
       ProfilePoliciesResponse resp = ProfilePoliciesResponse.fromJson(json.decode(answer.body));
-      print("getProfilePolicies() ${resp.policyProfile.name} ,  ${resp.code}");
+      debugPrint("getProfilePolicies() ${resp.policyProfile.name} ,  ${resp.code}");
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponse resp = ErrorResponse.fromJson(json.decode(answer.body));
-      print(resp.error_description);
+      debugPrint(resp.error_description);
     } else if (answer.statusCode == StatusCodes.INTERNAL_SERVER_ERROR) {
       ErrorResponse500 resp = ErrorResponse500.fromJson(json.decode(answer.body));
-      print(resp.message);
+      debugPrint(resp.message);
     } else if (answer.statusCode == StatusCodes.FORBIDDEN) {
       ErrorResponse403 resp = ErrorResponse403.fromJson(json.decode(answer.body));
-      print(resp.message);
+      debugPrint(resp.message);
     } else if (answer.statusCode == StatusCodes.NOT_FOUND) {
-      print("null");
+      debugPrint("null");
     }
   }
 */
 
 }
-
-

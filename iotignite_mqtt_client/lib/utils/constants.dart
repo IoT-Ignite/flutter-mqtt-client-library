@@ -1,4 +1,5 @@
 const String BASE_URL = "https://api.ardich.com/api/v3/";
+
 /*
 class DeviceParams {
   static String DEVICE = "829502c33adc4e95986fe6789717fa68";  // or "3296d391c42d4ef0a128318054d1db98"
@@ -16,3 +17,5 @@ class StatusCodes {
 }
 
 const FIVE_MIN = const Duration(minutes: 5);
+
+const bool DEBUG = false;

@@ -1,11 +1,14 @@
-import 'package:iotignite_mqtt_client/model/Roles.dart';
+import 'package:iotignite_mqtt_client/model/keys.dart';
+import 'package:iotignite_mqtt_client/model/roles.dart';
 
-class SyuserContent {
-
+class SysUserAuditorResponse {
   String mail;
   String firstName;
   String lastName;
   bool enabled;
+  Keys keys;
+  String tenantDomain;
+  String brand;
   int licenseCount;
   int licenseMonth;
   int trustAppSize;
@@ -24,11 +27,14 @@ class SyuserContent {
   String lastModifiedDate;
   String createdDate;
 
-  SyuserContent(
+  SysUserAuditorResponse(
       this.mail,
       this.firstName,
       this.lastName,
       this.enabled,
+      this.keys,
+      this.tenantDomain,
+      this.brand,
       this.licenseCount,
       this.licenseMonth,
       this.trustAppSize,
@@ -47,21 +53,18 @@ class SyuserContent {
       this.lastModifiedDate,
       this.createdDate);
 
-  @override
-  String toString() {
-    return 'Content{mail: $mail, firstName: $firstName, lastName: $lastName, enabled: $enabled, licenseCount: $licenseCount, licenseMonth: $licenseMonth, trustAppSize: $trustAppSize, trustUrlSize: $trustUrlSize, flowAppSize: $flowAppSize, appStoreSize: $appStoreSize, contentStoreSize: $contentStoreSize, flowProfilePolicySize: $flowProfilePolicySize, allDevicesAllowed: $allDevicesAllowed, devicesWithoutDataGroupAllowed: $devicesWithoutDataGroupAllowed, adminAreas: $adminAreas, roles: $roles, ipGroups: $ipGroups, links: $links, code: $code, lastModifiedDate: $lastModifiedDate, createdDate: $createdDate}';
-  }
-
-  factory SyuserContent.fromJson(Map<String, dynamic> json){
-
+  factory SysUserAuditorResponse.fromJson(Map<String, dynamic> json) {
     var rolesJson = json["roles"] as List;
     List<Roles> rolesList = rolesJson.map((x) => Roles.fromJson(x)).toList();
 
-    return SyuserContent(
+    return SysUserAuditorResponse(
         json["mail"] as String,
         json["firstName"] as String,
         json["lastName"] as String,
         json["enabled"] as bool,
+        Keys.fromJson(json["keys"]),
+        json["tenantDomain"] as String,
+        json["brand"] as String,
         json["licenseCount"] as int,
         json["licenseMonth"] as int,
         json["trustAppSize"] as int,
@@ -78,7 +81,11 @@ class SyuserContent {
         json["links"] as List,
         json["code"] as String,
         json["lastModifiedDate"] as String,
-        json["createdDate"] as String
-    );
+        json["createdDate"] as String);
+  }
+
+  @override
+  String toString() {
+    return 'SyuserAuditorResponse{mail: $mail, firstName: $firstName, lastName: $lastName, enabled: $enabled, keys: $keys, tenantDomain: $tenantDomain, brand: $brand, licenseCount: $licenseCount, licenseMonth: $licenseMonth, trustAppSize: $trustAppSize, trustUrlSize: $trustUrlSize, flowAppSize: $flowAppSize, appStoreSize: $appStoreSize, contentStoreSize: $contentStoreSize, flowProfilePolicySize: $flowProfilePolicySize, allDevicesAllowed: $allDevicesAllowed, devicesWithoutDataGroupAllowed: $devicesWithoutDataGroupAllowed, adminAreas: $adminAreas, roles: $roles, ipGroups: $ipGroups, links: $links, code: $code, lastModifiedDate: $lastModifiedDate, createdDate: $createdDate}';
   }
 }
