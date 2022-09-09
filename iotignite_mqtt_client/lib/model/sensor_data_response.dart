@@ -1,14 +1,14 @@
-import 'package:iotignite_mqtt_client/model/lists.dart';
+import 'package:iotignite_mqtt_client/model/data.dart';
 
 class SensorDataResponse {
   String status;
-  Lists data;
+  Data data;
 
   SensorDataResponse(this.status, this.data);
 
   factory SensorDataResponse.fromJson(Map<String, dynamic> json) {
     return SensorDataResponse(
-        json["status"] as String, Lists.fromJson(json["data"]));
+        json["status"] as String, Data.fromJson(json["data"]));
   }
 
   @override

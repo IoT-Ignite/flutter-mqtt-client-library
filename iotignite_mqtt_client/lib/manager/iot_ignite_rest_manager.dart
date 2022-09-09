@@ -5,11 +5,13 @@ import 'package:iotignite_mqtt_client/exceptions/invalid_email_format_exception.
 import 'package:iotignite_mqtt_client/model/app_key_response.dart';
 import 'dart:convert';
 import 'package:iotignite_mqtt_client/model/auth_response.dart';
+import 'package:iotignite_mqtt_client/model/data.dart';
 import 'package:iotignite_mqtt_client/model/device_admin_user_response.dart';
 import 'package:iotignite_mqtt_client/model/device_response.dart';
 import 'package:iotignite_mqtt_client/model/device_summary_response.dart';
 import 'package:iotignite_mqtt_client/model/end_user_response.dart';
 import 'package:iotignite_mqtt_client/model/node_inventory_response.dart';
+import 'package:iotignite_mqtt_client/model/pages.dart';
 import 'package:iotignite_mqtt_client/model/sensor_data_history_response.dart';
 import 'package:iotignite_mqtt_client/model/sensor_data_response.dart';
 import 'package:iotignite_mqtt_client/model/sys_user_auditor_response.dart';
@@ -20,37 +22,52 @@ import 'package:iotignite_mqtt_client/model/error_response_forbidden.dart';
 import 'package:iotignite_mqtt_client/model/error_response_not_found.dart';
 import 'package:iotignite_mqtt_client/model/error_response_internal_server.dart';
 import 'package:iotignite_mqtt_client/utils/utility_functions.dart';
+import 'package:iotignite_mqtt_client/model/extras.dart';
+
 
 class IotIgniteRESTLib {
-  String username;
-  String password;
+  String username = "";
+  String password = "";
   String grantType = "password";
-  bool autoRefreshToken;
-
+  bool autoRefreshToken = false;
   String refreshGrantType = "refresh_token";
-  String refreshToken;
+  String refreshToken = "";
+  String token = ""; // for use in other functions
 
-  String token; // for use in other functions
+  static bool isAuthenticated = false;
 
-  static IotIgniteRESTLib _singleInstance;
+  static IotIgniteRESTLib _singleInstance = IotIgniteRESTLib._("", "", false);
 
   IotIgniteRESTLib._(this.username, this.password, this.autoRefreshToken);
 
   // to make singleton object
   static IotIgniteRESTLib getInstance(username, password, autoRefresh) {
     // first time taking the object
-    if (_singleInstance == null) {
-      if (!EmailValidator.validate(username)) {
-        // throw format error
-        throw InvalidEmailFormatException("Mail format is invalid", 422);
-      }
-      _singleInstance = IotIgniteRESTLib._(username, password, autoRefresh);
+
+    if (!EmailValidator.validate(username)) {
+      // throw format error
+      throw InvalidEmailFormatException("Mail format is invalid", 422);
     }
+    _singleInstance = IotIgniteRESTLib._(username, password, autoRefresh);
 
     return _singleInstance;
   }
 
-  Future<void> auth() async {
+  static IotIgniteRESTLib getAuthenticatedInstance() {
+    
+    if (isAuthenticated) {
+      return _singleInstance;
+    }
+    return IotIgniteRESTLib._("", "", false);
+  }
+
+  void signOut() {
+
+    _singleInstance = IotIgniteRESTLib._("", "", false);
+    isAuthenticated = false;
+  }
+
+  Future<bool> auth() async {
     var url = Uri.parse(BASE_URL + "oauth/token");
     var data = {
       "grant_type": grantType,
@@ -73,15 +90,18 @@ class IotIgniteRESTLib {
       AuthResponseSuccess resp =
           AuthResponseSuccess.fromJson(json.decode(answer.body));
 
-      refreshToken =
-          resp.refreshToken; // for the first time to pass to getRefreshToken()
+      refreshToken = resp.refreshToken; // to pass to getRefreshToken()
       token = resp.accessToken; // to send to other functions for authorization
-      debugPrint(resp.accessToken);
+      print("access token: ${resp.accessToken}");
+      isAuthenticated = true;
+      return true;
     } else if (StatusCodes.BAD_REQUEST == answer.statusCode) {
-      ErrorResponseUnauthorized resp =
-          ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
-      debugPrint(resp.errorDescription);
+      ErrorResponseUnauthorized resp = ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
+      print(resp.errorDescription);
+      signOut();
+      return false;
     }
+    return false;
   }
 
   Future<void> getRefreshToken() async {
@@ -106,7 +126,7 @@ class IotIgniteRESTLib {
       AuthResponseSuccess resp =
           AuthResponseSuccess.fromJson(json.decode(answer.body));
 
-      debugPrint(resp.accessToken);
+      print("refresh: ${resp.accessToken}");
 
       refreshToken = resp.refreshToken; // to constantly renew
       token = resp.accessToken;
@@ -118,6 +138,7 @@ class IotIgniteRESTLib {
   }
 
   Timer RefreshToken() {
+    print("refresh token");
     return Timer.periodic(FIVE_MIN, (Timer t) => getRefreshToken());
   }
 
@@ -191,21 +212,25 @@ class IotIgniteRESTLib {
     }
   }
 
-  Future<void> getDeviceInfo() async {
+  Future<DeviceResponse> getDeviceInfo() async {
     var url = BASE_URL + "device";
     var answer =
         await http.get(url, headers: {"Authorization": "Bearer $token"});
 
     debugPrint("return code=${answer.statusCode}");
 
+    DeviceResponse resp = DeviceResponse([], [], Pages(0, 0, 0, 0));
+
     if (answer.statusCode == StatusCodes.SUCCESS) {
-      DeviceResponse resp = DeviceResponse.fromJson(json.decode(answer.body));
+      resp = DeviceResponse.fromJson(json.decode(answer.body));
       debugPrint("getDeviceInfo() $resp");
+      return resp;
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
       debugPrint(resp.errorDescription);
     }
+    return resp;
   }
 
   Future<void> getDeviceSummary() async {
@@ -226,17 +251,19 @@ class IotIgniteRESTLib {
     }
   }
 
-  Future<void> getDeviceNodeInventory(String device) async {
+  Future<NodeInventoryResponse> getDeviceNodeInventory(String device) async {
     var url = BASE_URL + "device/$device/device-node-inventory";
     var answer =
         await http.get(url, headers: {"Authorization": "Bearer $token"});
 
     debugPrint("return code=${answer.statusCode}");
 
+    NodeInventoryResponse resp = NodeInventoryResponse("", "", "", Extras([]));
+
     if (answer.statusCode == StatusCodes.SUCCESS) {
-      NodeInventoryResponse resp =
-          NodeInventoryResponse.fromJson(json.decode(answer.body));
+      resp = NodeInventoryResponse.fromJson(json.decode(answer.body));
       debugPrint("getDeviceNodeInventory() $resp");
+      return resp;
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
@@ -250,9 +277,11 @@ class IotIgniteRESTLib {
           ErrorResponseNotFound.fromJson(json.decode(answer.body));
       debugPrint(resp.message);
     }
+    resp.code = answer.statusCode.toString();
+    return resp;
   }
 
-  Future<void> getLastData(
+  Future<SensorDataResponse> getLastData(
       String device, String nodeId, String sensorId) async {
     var url = BASE_URL +
         "device/$device/sensor-data?"
@@ -262,10 +291,12 @@ class IotIgniteRESTLib {
 
     debugPrint("return code=${answer.statusCode}");
 
+    SensorDataResponse resp = SensorDataResponse("", Data("", "", "", 0, "", "", 0));
+
     if (answer.statusCode == StatusCodes.SUCCESS) {
-      SensorDataResponse resp =
-          SensorDataResponse.fromJson(json.decode(answer.body));
-      debugPrint("getLastData() $resp");
+      resp = SensorDataResponse.fromJson(json.decode(answer.body));
+      print("getLastData() ${resp.data.data}");
+      return resp;
     } else if (answer.statusCode == StatusCodes.UNAUTHORIZED) {
       ErrorResponseUnauthorized resp =
           ErrorResponseUnauthorized.fromJson(json.decode(answer.body));
@@ -279,6 +310,7 @@ class IotIgniteRESTLib {
           ErrorResponseInternalServer.fromJson(json.decode(answer.body));
       debugPrint(resp.message);
     }
+    return resp;
   }
 
   Future<void> getThingDataHistory(

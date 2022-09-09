@@ -1,11 +1,11 @@
 import 'package:iotignite_mqtt_client/model/links.dart';
-import 'package:iotignite_mqtt_client/model/page.dart';
+import 'package:iotignite_mqtt_client/model/pages.dart';
 import 'package:iotignite_mqtt_client/model/end_user_content.dart';
 
 class EndUserResponse {
   List<Links> linksList;
   List<EndUserContent> content;
-  Page page;
+  Pages page;
 
   EndUserResponse(this.linksList, this.content, this.page);
 
@@ -21,7 +21,7 @@ class EndUserResponse {
             EndUserContent.fromJson(contentsJsonArrayObj))
         .toList();
 
-    return EndUserResponse(linkList, contentList, Page.fromJson(json["page"]));
+    return EndUserResponse(linkList, contentList, Pages.fromJson(json["page"]));
   }
 
   @override

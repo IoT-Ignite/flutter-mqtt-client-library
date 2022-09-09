@@ -1,4 +1,4 @@
-class Lists {
+class Data {
   String deviceId;
   String command;
   String data;
@@ -7,11 +7,11 @@ class Lists {
   String sensorId;
   int cloudDate;
 
-  Lists(this.deviceId, this.command, this.data, this.createDate, this.nodeId,
+  Data(this.deviceId, this.command, this.data, this.createDate, this.nodeId,
       this.sensorId, this.cloudDate);
 
-  factory Lists.fromJson(Map<String, dynamic> json){
-    return Lists(
+  factory Data.fromJson(Map<String, dynamic> json){
+    return Data(
       json["deviceId"] as String,
       json["command"] as String,
       json["data"] as String,

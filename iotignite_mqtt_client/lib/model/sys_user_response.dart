@@ -1,11 +1,11 @@
 import 'package:iotignite_mqtt_client/model/links.dart';
-import 'package:iotignite_mqtt_client/model/page.dart';
+import 'package:iotignite_mqtt_client/model/pages.dart';
 import 'package:iotignite_mqtt_client/model/sys_user_content.dart';
 
 class SysUserResponse {
   List<Links> links;
   List<SysUserContent> content;
-  Page page;
+  Pages page;
 
   SysUserResponse(this.links, this.content, this.page);
 
@@ -18,7 +18,7 @@ class SysUserResponse {
     List<SysUserContent> contentList =
         contentsJsonArray.map((x) => SysUserContent.fromJson(x)).toList();
 
-    return SysUserResponse(linkList, contentList, Page.fromJson(json["page"]));
+    return SysUserResponse(linkList, contentList, Pages.fromJson(json["page"]));
   }
 
   @override

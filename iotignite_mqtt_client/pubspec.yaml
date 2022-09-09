@@ -4,7 +4,7 @@ version: 0.0.1
 homepage:
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
@@ -12,6 +12,12 @@ dependencies:
     sdk: flutter
   http: ^0.12.2
   email_validator: ^2.1.16
+  shared_preferences: ^2.0.15
+  awesome_snackbar_content:
+  flutter_gradient_colors: ^2.1.1
+  gradient_textfield: ^0.0.1
+  gradient_borders: ^0.2.0
+  flutter_easyloading: ^3.0.5
 
 dev_dependencies:
   flutter_test:
@@ -25,8 +31,8 @@ dev_dependencies:
 flutter:
 
   # To add assets to your package, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - lib/images/temp_green.png
   #   - images/a_dot_ham.jpeg
   #
   # For details regarding assets in packages, see
@@ -40,10 +46,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: SignikaNegative
+      fonts:
+        - asset: lib/fonts/SignikaNegative-VariableFont_wght.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

@@ -1,7 +1,7 @@
-import 'package:iotignite_mqtt_client/model/lists.dart';
+import 'package:iotignite_mqtt_client/model/data.dart';
 
 class SensorDataHistoryResponse {
-  List<Lists> list;
+  List<Data> list;
   int count;
   String lastId;
 
@@ -9,7 +9,7 @@ class SensorDataHistoryResponse {
 
   factory SensorDataHistoryResponse.fromJson(Map<String, dynamic> json) {
     var listsJson = json["list"] as List;
-    List<Lists> listsList = listsJson.map((x) => Lists.fromJson(x)).toList();
+    List<Data> listsList = listsJson.map((x) => Data.fromJson(x)).toList();
 
     return SensorDataHistoryResponse(
         listsList, json["count"] as int, json["lastId"] as String);

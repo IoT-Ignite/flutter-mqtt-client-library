@@ -1,13 +1,13 @@
-class Page{
+class Pages{
   int size;
   int totalElements;
   int totalPages;
   int number;
 
-  Page(this.size, this.totalElements, this.totalPages, this.number);
+  Pages(this.size, this.totalElements, this.totalPages, this.number);
 
-  factory Page.fromJson(Map<String, dynamic> json){
-    return Page(
+  factory Pages.fromJson(Map<String, dynamic> json){
+    return Pages(
         json["size"] as int,
         json["totalElements"] as int,
         json["totalPages"] as int,

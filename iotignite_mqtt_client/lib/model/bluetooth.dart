@@ -9,9 +9,9 @@ class Bluetooth{
 
   factory Bluetooth.fromJson(Map<String, dynamic> json){
     return Bluetooth(
-      json["bluetoothState"] == null ? null : json["bluetoothState"] as String,
+      json["bluetoothState"] == null ? "" : json["bluetoothState"] as String,
       json["bluetoothMacId"] as dynamic,
-      json["bluetoothSupported"] == null ? null : json["bluetoothSupported"] as bool,
+      json["bluetoothSupported"] == null ? false : json["bluetoothSupported"] as bool,
       json["bluetoothpaireddevices"] as dynamic,
     );
   }

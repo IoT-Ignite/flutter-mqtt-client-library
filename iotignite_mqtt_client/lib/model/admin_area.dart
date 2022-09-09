@@ -9,7 +9,7 @@ class AdminArea {
     return AdminArea(
       json["code"] as String,
       json["name"] as String,
-      json["tenantDomain"] == null ? null : json["tenantDomain"] as String,
+      json["tenantDomain"] == null ? "" : json["tenantDomain"] as String,
     );
   }
 

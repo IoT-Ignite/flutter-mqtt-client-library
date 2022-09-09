@@ -9,12 +9,9 @@ class Roles {
 
   factory Roles.fromJson(Map<String, dynamic> json) {
     var permissionsJson =
-        json["permissions"] == null ? null : json["permissions"] as List;
+        json["permissions"] == null ? [] : json["permissions"] as List;
     List<Permissions> permissionsList;
-    if (permissionsList != null) {
-      permissionsList =
-          permissionsJson.map((x) => Permissions.fromJson(x)).toList();
-    }
+    permissionsList = permissionsJson.map((x) => Permissions.fromJson(x)).toList();
 
     return Roles(
       json["name"] as String,

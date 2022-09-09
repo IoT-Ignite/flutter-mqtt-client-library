@@ -7,7 +7,7 @@ class Policy{
   factory Policy.fromJson(Map<String, dynamic> json){
     return Policy(
         json["code"] as String,
-        json["name"] == null ? null : json["name"] as String
+        json["name"] == null ? "" : json["name"] as String
     );
   }
 

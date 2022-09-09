@@ -1,11 +1,11 @@
 import 'package:iotignite_mqtt_client/model/links.dart';
 import 'package:iotignite_mqtt_client/model/device_content.dart';
-import 'package:iotignite_mqtt_client/model/page.dart';
+import 'package:iotignite_mqtt_client/model/pages.dart';
 
 class DeviceSummaryResponse {
   List<Links> links;
   List<DeviceContent> content;
-  Page page;
+  Pages page;
 
   DeviceSummaryResponse(this.links, this.content, this.page);
 
@@ -19,7 +19,7 @@ class DeviceSummaryResponse {
         contentsJsonArray.map((y) => DeviceContent.fromJson(y)).toList();
 
     return DeviceSummaryResponse(
-        linkList, contentList, Page.fromJson(json["page"]));
+        linkList, contentList, Pages.fromJson(json["page"]));
   }
 
   @override

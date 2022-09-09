@@ -11,9 +11,15 @@ class Network {
 
   factory Network.fromJson(Map<String, dynamic> json) {
     return Network(
-      json["telephony"] == null ? null : Telephony.fromJson(json["telephony"]),
-      json["wifi"] == null ? null : Wifi.fromJson(json["wifi"]),
-      json["bluetooth"] == null ? null : Bluetooth.fromJson(json["bluetooth"]),
+      json["telephony"] == null ? Telephony(
+          false, "", "", [], "", []
+      ) : Telephony.fromJson(json["telephony"]),
+      json["wifi"] == null ? Wifi(
+          "", "", "", "", "", "", false, "", "", "", ""
+      ) : Wifi.fromJson(json["wifi"]),
+      json["bluetooth"] == null ? Bluetooth(
+          "", [], false, []
+      ) : Bluetooth.fromJson(json["bluetooth"]),
     );
   }
 
