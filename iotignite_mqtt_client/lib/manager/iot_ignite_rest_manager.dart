@@ -139,7 +139,7 @@ class IotIgniteRESTLib {
 
   Timer RefreshToken() {
     print("refresh token");
-    return Timer.periodic(FIVE_MIN, (Timer t) => getRefreshToken());
+    return Timer.periodic(TWO_MIN, (Timer t) => getRefreshToken());
   }
 
   Future<void> getEndUser() async {

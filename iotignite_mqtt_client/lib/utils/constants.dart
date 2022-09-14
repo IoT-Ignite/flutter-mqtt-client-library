@@ -9,6 +9,6 @@ class StatusCodes {
   static int INTERNAL_SERVER_ERROR = 500;
 }
 
-const FIVE_MIN = Duration(seconds: 13);
+const TWO_MIN = Duration(minutes: 2);
 
 const bool DEBUG = false;

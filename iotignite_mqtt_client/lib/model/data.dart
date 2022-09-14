@@ -11,10 +11,14 @@ class Data {
       this.sensorId, this.cloudDate);
 
   factory Data.fromJson(Map<String, dynamic> json){
+    String sensorData = json["data"] ?? "";
+    if(sensorData != ""){
+      sensorData = sensorData.substring(1,sensorData.length-1);
+    }
     return Data(
       json["deviceId"] as String,
       json["command"] as String,
-      json["data"] as String,
+      sensorData,
       json["createDate"] as int,
       json["nodeId"] as String,
       json["sensorId"] as String,
